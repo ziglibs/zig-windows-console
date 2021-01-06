@@ -24,6 +24,7 @@ pub fn main() !void {
         con.setOutputMode(before_output_mode) catch {};
     }
 
+    std.debug.print("Move your mouse around and type on your keyboard to see what I do!\n", .{});
     main: while (true) {
         var ir = try con.getInputRecord();
 
