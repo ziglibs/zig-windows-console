@@ -1,5 +1,5 @@
 // https://docs.microsoft.com/en-us/windows/console/key-event-record-str
-// [...$0.parentElement.children].map(_ => "pub const " + _.children[0].innerText.split(" ").join(" = ")).join(";\n")+";\n"
+// [...$0.parentElement.children].map(_ => "pub const " + _.children[0].innerText.split(" ").map(_ => _.toLowerCase()).join(" = ")).join(";\n")+";\n"
 
 pub const capslock_on = 0x0080;
 pub const enhanced_key = 0x0100;
