@@ -99,7 +99,6 @@ pub const Event = union(enum) {
                 }};
             },
             c.MOUSE_EVENT => {
-                std.debug.print("{}\n", .{ir.Event.MouseEvent.dwButtonState});
                 return Self{.mouse =. {
                     .abs_coords = @bitCast(Coords, ir.Event.MouseEvent.dwMousePosition),
                     .mouse_buttons = MouseButtons.fromUnsigned(ir.Event.MouseEvent.dwButtonState),

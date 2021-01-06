@@ -30,7 +30,17 @@ pub fn main() !void {
 
         switch (event) {
             .key => |key| {
-                std.debug.print("{}\n", .{key});
+                switch (key.key) {
+                    .ascii => |ascii| {
+                        if (key.is_down and ascii == 3) {
+                            return;
+                        }
+                    },
+                    else => {}
+                }
+            },
+            .mouse => |mouse| {
+                std.debug.print("{}\n", .{mouse});
             },
             // c.KEY_EVENT => {
             //     // Exit on Control + C
@@ -54,7 +64,7 @@ pub fn main() !void {
             //         ir.Event.MouseEvent.dwMousePosition, relative_x, relative_y, ir.Event.MouseEvent.dwButtonState
             //     });
             // },
-            else => {}
+            // else => {}
         }
     }
 }
