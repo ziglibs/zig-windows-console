@@ -3,7 +3,8 @@ pub const vk = @import("c/vk.zig");
 const std = @import("std");
 const testing = std.testing;
 
-usingnamespace @import("modes.zig");
+pub usingnamespace @import("modes.zig");
+pub usingnamespace @import("event.zig");
 
 pub const ConsoleApp = struct {
     const Self = @This();
@@ -54,6 +55,7 @@ pub const ConsoleApp = struct {
         }
     }
 
+    /// NOTE: Please don't directly use this - instead, use `getEvent`!
     pub fn getInputRecord(self: Self) !c.INPUT_RECORD {
         var events: u32 = 0;
         var input_record = std.mem.zeroes(c.INPUT_RECORD);
@@ -65,6 +67,10 @@ pub const ConsoleApp = struct {
         }
 
         return input_record;
+    }
+
+    pub fn getEvent(self: Self) !Event {
+        return Event.fromInputRecord(try self.getInputRecord());
     }
 
     pub fn getScreenBufferInfo(self: Self) !c.CONSOLE_SCREEN_BUFFER_INFO {
