@@ -6,13 +6,8 @@ fn _toUnsigned(comptime modes: type, Self: type, self: Self) u32 {
     var mode: u32 = 0;
 
     inline for (std.meta.fields(Self)) |mode_field| {
-        inline for (std.meta.declarations(modes)) |c_field| {
-            if (std.ascii.eqlIgnoreCase(mode_field.name, c_field.name)) {
-                if (@field(self, mode_field.name) == true) {
-                    mode = mode | @field(modes, c_field.name);
-                }
-            }
-        }
+        if (@field(self, mode_field.name) == true)
+            mode = mode | @field(modes, mode_field.name);
     }
 
     return mode;
@@ -22,14 +17,10 @@ fn _fromUnsigned(comptime modes: type, Self: type, m: u32) Self {
     var mode = Self{};
 
     inline for (std.meta.fields(Self)) |mode_field| {
-        inline for (std.meta.declarations(modes)) |c_field| {
-            if (std.ascii.eqlIgnoreCase(mode_field.name, c_field.name)) {
-                if (m & @field(modes, c_field.name) == @field(modes, c_field.name))
-                    @field(mode, mode_field.name) = true
-                else
-                    @field(mode, mode_field.name) = false;
-            }
-        }
+        if (m & @field(modes, mode_field.name) == @field(modes, mode_field.name))
+            @field(mode, mode_field.name) = true
+        else
+            @field(mode, mode_field.name) = false;
     }
 
     return mode;
