@@ -10,13 +10,6 @@ pub const FOCUS_EVENT = 0x0010;
 pub extern fn SetConsoleMode(hConsoleHandle: HANDLE, dwMode: DWORD) BOOL;
 pub extern fn GetConsoleMode(hConsoleHandle: HANDLE, lpMode: LPDWORD) BOOL;
 
-// Cursor
-pub const CONSOLE_CURSOR_INFO = extern struct {
-    dwSize: DWORD,
-    bVisible: BOOL,
-};
-pub extern fn SetConsoleCursorInfo(hConsoleOutput: HANDLE, lpConsoleCursorInfo: *const CONSOLE_CURSOR_INFO) BOOL;
-
 // Events
 const union_unnamed_248 = extern union {
     UnicodeChar: WCHAR,
