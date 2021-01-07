@@ -1,7 +1,9 @@
-const c = @import("c/c.zig");
-const vk = @import("c/vk.zig");
 const std = @import("std");
+
+const c = @import("c/c.zig");
+
 const utils = @import("utils.zig");
+const VirtualKey = @import("virtual_key.zig");
 
 pub const Coords = struct {
     x: i16,
@@ -11,7 +13,7 @@ pub const Coords = struct {
 pub const Key = union(enum) {
     ascii: u8,
     unicode: u16,
-    virtual_key: vk.VK,
+    virtual_key: VirtualKey,
     unknown: void
 };
 
@@ -78,7 +80,7 @@ pub const Event = union(enum) {
                     .key =
                         if (ir.Event.KeyEvent.uChar.AsciiChar == ir.Event.KeyEvent.uChar.UnicodeChar)
                             (if (ir.Event.KeyEvent.uChar.AsciiChar == 0)
-                                (if (vk.fromValue(ir.Event.KeyEvent.wVirtualKeyCode)) |v| Key{ .virtual_key = v } else Key{ .unknown = {} } )
+                                (if (VirtualKey.fromValue(ir.Event.KeyEvent.wVirtualKeyCode)) |v| Key{ .virtual_key = v } else Key{ .unknown = {} } )
                             else Key{ .ascii = ir.Event.KeyEvent.uChar.AsciiChar })
                         else Key{ .unicode = ir.Event.KeyEvent.uChar.UnicodeChar },
                     .is_down = if (ir.Event.KeyEvent.bKeyDown == 0) false else true,

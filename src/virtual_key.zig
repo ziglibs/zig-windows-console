@@ -1,17 +1,17 @@
 const std = @import("std");
 
-pub const VK = struct {
-    alias: []const u8,
-    value: u16
-};
+const Self = @This();
 
-pub const virtual_keys = comptime v: {
+alias: []const u8,
+value: u16,
+
+const virtual_keys = comptime v: {
     @setEvalBranchQuota(100000);
 
-    const list = @embedFile("vk_list");
+    const list = @embedFile("c/vk_list");
     
     var i: usize = 0;
-    var vks = [_]VK{std.mem.zeroes(VK)}**(std.mem.count(u8, list, "\n")+1);
+    var vks = [_]Self{std.mem.zeroes(Self)}**(std.mem.count(u8, list, "\n")+1);
     var lines = std.mem.split(list, "\n");
 
     while (lines.next()) |line| {
@@ -27,14 +27,14 @@ pub const virtual_keys = comptime v: {
     break :v &vks;
 };
 
-pub fn fromAlias(alias: []const u8) ?VK {
+pub fn fromSymbolic(symbol: []const u8) ?Self {
     for (virtual_keys) |v| {
-        if (std.mem.eql(u8, v.alias, alias)) return v;
+        if (std.mem.eql(u8, v.alias, symbol)) return v;
     }
     return null;
 }
 
-pub fn fromValue(value: u16) ?VK {
+pub fn fromValue(value: u16) ?Self {
     for (virtual_keys) |v| {
         if (value == v.value) return v;
     }
