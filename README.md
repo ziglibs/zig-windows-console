@@ -1,10 +1,10 @@
-# zwincon
+# zig-windows-console
 
-Tools for all your **Z**ig **Win**dows **Con**sole needs!
+Tools for all your Zig + Windows Console needs!
 
 ## Usage
 
-I have to write this part. Also, this library is very, very far from being finished so please don't use it yet - the API is subject to change.
+Add this to your `build.zig` and check out `examples/events.zig` for a quick, 5 minute primer.
 
 ## Try It!
 
