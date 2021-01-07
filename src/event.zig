@@ -1,9 +1,7 @@
 const c = @import("c/c.zig");
 const vk = @import("c/vk.zig");
 const std = @import("std");
-
-const control_keys = @import("c/consts/control_keys.zig");
-const button_states = @import("c/consts/button_states.zig");
+const utils = @import("utils.zig");
 
 pub const Coords = struct {
     x: i16,
@@ -28,20 +26,7 @@ pub const ControlKeys = struct {
     right_alt_pressed: bool = false,
     right_ctrl_pressed: bool = false,
     scrolllock_on: bool = false,
-    shift_pressed: bool = false,
-
-    pub fn fromUnsigned(u: u32) Self {
-        var ck = Self{};
-        
-        inline for (std.meta.fields(Self)) |ck_field| {
-            if (u & @field(control_keys, ck_field.name) == @field(control_keys, ck_field.name))
-                @field(ck, ck_field.name) = true
-            else
-                @field(ck, ck_field.name) = false;
-        }
-
-        return ck;
-    }
+    shift_pressed: bool = false
 };
 
 pub const KeyEvent = struct {
@@ -55,20 +40,7 @@ pub const MouseButtons = struct {
 
     left_mouse_button: bool = false,
     middle_mouse_button: bool = false,
-    right_mouse_button: bool = false,
-
-    pub fn fromUnsigned(u: u32) Self {
-        var mb = Self{};
-        
-        inline for (std.meta.fields(Self)) |mb_field| {
-            if (u & @field(button_states, mb_field.name) == @field(button_states, mb_field.name))
-                @field(mb, mb_field.name) = true
-            else
-                @field(mb, mb_field.name) = false;
-        }
-
-        return mb;
-    }
+    right_mouse_button: bool = false
 };
 
 pub const MouseEvent = struct {
@@ -95,14 +67,14 @@ pub const Event = union(enum) {
                             else Key{ .ascii = ir.Event.KeyEvent.uChar.AsciiChar })
                         else Key{ .unicode = ir.Event.KeyEvent.uChar.UnicodeChar },
                     .is_down = if (ir.Event.KeyEvent.bKeyDown == 0) false else true,
-                    .control_keys = ControlKeys.fromUnsigned(ir.Event.KeyEvent.dwControlKeyState)
+                    .control_keys = utils.fromUnsigned(ControlKeys, ir.Event.KeyEvent.dwControlKeyState)
                 }};
             },
             c.MOUSE_EVENT => {
                 return Self{.mouse =. {
                     .abs_coords = @bitCast(Coords, ir.Event.MouseEvent.dwMousePosition),
-                    .mouse_buttons = MouseButtons.fromUnsigned(ir.Event.MouseEvent.dwButtonState),
-                    .control_keys = ControlKeys.fromUnsigned(ir.Event.MouseEvent.dwControlKeyState)
+                    .mouse_buttons = utils.fromUnsigned(MouseButtons, ir.Event.MouseEvent.dwButtonState),
+                    .control_keys = utils.fromUnsigned(ControlKeys, ir.Event.MouseEvent.dwControlKeyState)
                 }};
             },
             else => std.debug.panic("Not implemented: {}!\n", .{ir.EventType})

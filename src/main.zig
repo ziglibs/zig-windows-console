@@ -2,6 +2,7 @@ pub const c = @import("c/c.zig");
 pub const vk = @import("c/vk.zig");
 const std = @import("std");
 const testing = std.testing;
+const utils = @import("utils.zig");
 
 pub usingnamespace @import("modes.zig");
 pub usingnamespace @import("event.zig");
@@ -26,11 +27,11 @@ pub const ConsoleApp = struct {
                 else => |err| return c.unexpectedError(err),
             }
         }
-        return InputMode.fromUnsigned(mode);
+        return utils.fromUnsigned(InputMode, mode);
     }
 
     pub fn setInputMode(self: Self, mode: InputMode) !void {
-        if (c.SetConsoleMode(self.stdin_handle, mode.toUnsigned()) == 0) {
+        if (c.SetConsoleMode(self.stdin_handle, utils.toUnsigned(InputMode, mode)) == 0) {
             switch (c.kernel32.GetLastError()) {
                 else => |err| return c.unexpectedError(err),
             }
@@ -44,11 +45,11 @@ pub const ConsoleApp = struct {
                 else => |err| return c.unexpectedError(err),
             }
         }
-        return OutputMode.fromUnsigned(mode);
+        return utils.fromUnsigned(OutputMode, mode);
     }
 
     pub fn setOutputMode(self: Self, mode: OutputMode) !void {
-        if (c.SetConsoleMode(self.stdout_handle, mode.toUnsigned()) == 0) {
+        if (c.SetConsoleMode(self.stdout_handle, utils.toUnsigned(OutputMode, mode)) == 0) {
             switch (c.kernel32.GetLastError()) {
                 else => |err| return c.unexpectedError(err),
             }

@@ -1,8 +1,3 @@
-const std = @import("std");
-const utils = @import("utils.zig");
-const input_modes = @import("c/consts/input_modes.zig");
-const output_modes = @import("c/consts/output_modes.zig");
-
 pub const InputMode = struct {
     const Self = @This();
 
@@ -15,14 +10,6 @@ pub const InputMode = struct {
     enable_window_input: bool = false,
     enable_virtual_terminal_input: bool = false,
     enable_extended_flags: bool = true,
-
-    pub fn toUnsigned(self: Self) u32 {
-        return utils.toUnsigned(input_modes, Self, self);
-    }
-
-    pub fn fromUnsigned(m: u32) Self {
-        return utils.fromUnsigned(input_modes, Self, m);
-    }
 };
 
 pub const OutputMode = struct {
@@ -33,12 +20,4 @@ pub const OutputMode = struct {
     enable_virtual_terminal_processing: bool = false,
     disable_newline_auto_return: bool = false,
     enable_lvb_grid_worldwide: bool = false,
-
-    pub fn toUnsigned(self: Self) u32 {
-        return utils.toUnsigned(output_modes, Self, self);
-    }
-
-    pub fn fromUnsigned(m: u32) Self {
-        return utils.fromUnsigned(output_modes, Self, m);
-    }
 };

@@ -9,7 +9,7 @@ pub fn hiWord(x: u32) u32 {
     return @truncate(u16, x >> 32);
 }
 
-pub fn toUnsigned(T: type, t: T) u32 {
+pub fn toUnsigned(comptime T: type, t: T) u32 {
     var unsigned: u32 = 0;
 
     inline for (std.meta.fields(T)) |field| {
@@ -20,7 +20,7 @@ pub fn toUnsigned(T: type, t: T) u32 {
     return unsigned;
 }
 
-pub fn fromUnsigned(T: type, unsigned: u32) T {
+pub fn fromUnsigned(comptime T: type, unsigned: u32) T {
     var t = T{};
 
     inline for (std.meta.fields(T)) |field| {
