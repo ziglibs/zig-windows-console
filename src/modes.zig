@@ -1,30 +1,7 @@
 const std = @import("std");
+const utils = @import("utils.zig");
 const input_modes = @import("c/consts/input_modes.zig");
 const output_modes = @import("c/consts/output_modes.zig");
-
-fn _toUnsigned(comptime modes: type, Self: type, self: Self) u32 {
-    var mode: u32 = 0;
-
-    inline for (std.meta.fields(Self)) |mode_field| {
-        if (@field(self, mode_field.name) == true)
-            mode = mode | @field(modes, mode_field.name);
-    }
-
-    return mode;
-}
-
-fn _fromUnsigned(comptime modes: type, Self: type, m: u32) Self {
-    var mode = Self{};
-
-    inline for (std.meta.fields(Self)) |mode_field| {
-        if (m & @field(modes, mode_field.name) == @field(modes, mode_field.name))
-            @field(mode, mode_field.name) = true
-        else
-            @field(mode, mode_field.name) = false;
-    }
-
-    return mode;
-}
 
 pub const InputMode = struct {
     const Self = @This();
@@ -40,11 +17,11 @@ pub const InputMode = struct {
     enable_extended_flags: bool = true,
 
     pub fn toUnsigned(self: Self) u32 {
-        return _toUnsigned(input_modes, Self, self);
+        return utils.toUnsigned(input_modes, Self, self);
     }
 
     pub fn fromUnsigned(m: u32) Self {
-        return _fromUnsigned(input_modes, Self, m);
+        return utils.fromUnsigned(input_modes, Self, m);
     }
 };
 
@@ -58,10 +35,10 @@ pub const OutputMode = struct {
     enable_lvb_grid_worldwide: bool = false,
 
     pub fn toUnsigned(self: Self) u32 {
-        return _toUnsigned(output_modes, Self, self);
+        return utils.toUnsigned(output_modes, Self, self);
     }
 
     pub fn fromUnsigned(m: u32) Self {
-        return _fromUnsigned(output_modes, Self, m);
+        return utils.fromUnsigned(output_modes, Self, m);
     }
 };
