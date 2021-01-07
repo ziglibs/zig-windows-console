@@ -66,6 +66,9 @@ pub const Event = union(enum) {
 
     key: KeyEvent,
     mouse: MouseEvent,
+    window_buffer_size: Coords,
+    menu: u32,
+    focus: bool,
 
     pub fn fromInputRecord(ir: c.INPUT_RECORD) Self {
         switch (ir.EventType) {
@@ -95,6 +98,15 @@ pub const Event = union(enum) {
                     ) else null,
                     .control_keys = utils.fromUnsigned(ControlKeys, ir.Event.MouseEvent.dwControlKeyState)
                 }};
+            },
+            c.WINDOW_BUFFER_SIZE_EVENT => {
+                return Self{.window_buffer_size = @bitCast(Coords, ir.Event.WindowBufferSizeEvent.dwSize)};
+            },
+            c.MENU_EVENT => {
+                return Self{.menu = ir.Event.MenuEvent.dwCommandId};
+            },
+            c.FOCUS_EVENT => {
+                return Self{.focus = if (ir.Event.FocusEvent.bSetFocus == 0) false else true};
             },
             else => std.debug.panic("Not implemented: {}!\n", .{ir.EventType})
         }

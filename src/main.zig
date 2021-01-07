@@ -74,6 +74,12 @@ pub const ConsoleApp = struct {
         return Event.fromInputRecord(try self.getInputRecord());
     }
 
+    pub fn viewportCoords(self: Self, coords: Coords) !Coords {
+        var buf = try self.getScreenBufferInfo();
+
+        return Coords{.x = coords.x, .y = coords.y - buf.srWindow.Top};
+    }
+
     pub fn getScreenBufferInfo(self: Self) !c.CONSOLE_SCREEN_BUFFER_INFO {
         var bf = std.mem.zeroes(c.CONSOLE_SCREEN_BUFFER_INFO);
     

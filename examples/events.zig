@@ -25,46 +25,39 @@ pub fn main() !void {
     }
 
     std.debug.print("Move your mouse around and type on your keyboard to see what I do!\n", .{});
-    while (true) {
+    main: while (true) {
         var event = try con.getEvent();
 
+        // NOTE: Mouse events don't work in Windows Terminal because Microsoft is slacking
         switch (event) {
             .key => |key| {
-                switch (key.key) {
-                    .ascii => |ascii| {
-                        if (key.is_down and ascii == 3) {
-                            return;
-                        }
-                    },
-                    else => {}
-                }
+                if (key.key == .ascii and key.key.ascii == 3) break :main;
+
+                std.debug.print("Key Event | key: {} | is down: {}\n", .{
+                    key.key, key.is_down
+                });
             },
             .mouse => |mouse| {
-                std.debug.print("{}\n", .{mouse});
-            },
-            // c.KEY_EVENT => {
-            //     // Exit on Control + C
-            //     if (ir.Event.KeyEvent.uChar.AsciiChar == 3) break :main;
-
-            //     std.debug.print("KEY_EVENT | ascii key: {} ({c}) | unicode key: {} | virtual key: {} ({}) | is down: {} | repeat: {}\n", .{
-            //         ir.Event.KeyEvent.uChar.AsciiChar, ir.Event.KeyEvent.uChar.AsciiChar, ir.Event.KeyEvent.uChar.UnicodeChar, ir.Event.KeyEvent.wVirtualKeyCode, if (zwincon.vk.fromValue(ir.Event.KeyEvent.wVirtualKeyCode)) |v| v.alias else "Unknown", ir.Event.KeyEvent.bKeyDown, ir.Event.KeyEvent.wRepeatCount
-            //     });
-            // },
-            // // NOTE: Mouse events don't work in Windows Terminal because Microsoft is slacking
-            // c.MOUSE_EVENT => {
-            //     // NOTE: The screen buffer has a `dwCursorPosition` - this is not the same thing as `dwMousePosition`.
-            //     // The former is the position of the caret while the latter is the position of the mouse pointer.
-            //     var screen_buf = try con.getScreenBufferInfo();
-            //     var mouse_event = ir.Event.MouseEvent;
-
-            //     var relative_x = mouse_event.dwMousePosition.X;
-            //     var relative_y = mouse_event.dwMousePosition.Y - screen_buf.srWindow.Top; // dwMousePosition's Y is absolute (from the top of the console), this makes it relative to the viewport
+                std.debug.print("Mouse Event | abs: {} | in viewport: {}", .{mouse.abs_coords, try con.viewportCoords(mouse.abs_coords)});
+                if (mouse.mouse_flags.double_click) std.debug.print(" | double click", .{});
+                if (mouse.mouse_flags.mouse_moved) std.debug.print(" | mouse moved", .{});
+                if (mouse.mouse_flags.mouse_wheeled or mouse.mouse_flags.mouse_hwheeled) std.debug.print(" | mouse wheel: {}", .{mouse.mouse_scroll_direction.?});
                 
-            //     std.debug.print("MOUSE_EVENT | location: {} | location in viewport: {} {} | buttons: {}\n", .{
-            //         ir.Event.MouseEvent.dwMousePosition, relative_x, relative_y, ir.Event.MouseEvent.dwButtonState
-            //     });
-            // },
-            // else => {}
+                if (mouse.mouse_buttons.left_mouse_button) std.debug.print(" | left click", .{});
+                if (mouse.mouse_buttons.middle_mouse_button) std.debug.print(" | middle click", .{});
+                if (mouse.mouse_buttons.right_mouse_button) std.debug.print(" | right click", .{});
+
+                std.debug.print("\n", .{});
+            },
+            .window_buffer_size => |wbz| {
+                std.debug.print("Window Buffer Size | {}\n", .{wbz});
+            },
+            .menu => |menu| {
+                std.debug.print("Menu Event | {}\n", .{menu});
+            },
+            .focus => |focused| {
+                std.debug.print("Focused | {}\n", .{focused});
+            }
         }
     }
 }
