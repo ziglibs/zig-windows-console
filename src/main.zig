@@ -5,7 +5,7 @@ const testing = std.testing;
 const utils = @import("utils.zig");
 
 pub usingnamespace @import("modes.zig");
-pub usingnamespace @import("event.zig");
+pub usingnamespace @import("events.zig");
 
 pub const ConsoleApp = struct {
     const Self = @This();

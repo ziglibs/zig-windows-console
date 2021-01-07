@@ -16,8 +16,6 @@ pub const Key = union(enum) {
 };
 
 pub const ControlKeys = struct {
-    const Self = @This();
-
     capslock_on: bool = false,
     enhanced_key: bool = false,
     left_alt_pressed: bool = false,
@@ -36,16 +34,30 @@ pub const KeyEvent = struct {
 };
 
 pub const MouseButtons = struct {
-    const Self = @This();
-
     left_mouse_button: bool = false,
     middle_mouse_button: bool = false,
     right_mouse_button: bool = false
 };
 
+pub const MouseFlags = struct {
+    double_click: bool = false,
+    mouse_hwheeled: bool = false,
+    mouse_moved: bool = false,
+    mouse_wheeled: bool = false
+};
+
+pub const MouseScrollDirection = enum {
+    up,
+    down,
+    left,
+    right
+};
+
 pub const MouseEvent = struct {
     abs_coords: Coords,
     mouse_buttons: MouseButtons,
+    mouse_flags: MouseFlags,
+    mouse_scroll_direction: ?MouseScrollDirection,
     control_keys: ControlKeys
 };
 
@@ -71,9 +83,16 @@ pub const Event = union(enum) {
                 }};
             },
             c.MOUSE_EVENT => {
+                var flags = utils.fromUnsigned(MouseFlags, ir.Event.MouseEvent.dwEventFlags);
                 return Self{.mouse =. {
                     .abs_coords = @bitCast(Coords, ir.Event.MouseEvent.dwMousePosition),
                     .mouse_buttons = utils.fromUnsigned(MouseButtons, ir.Event.MouseEvent.dwButtonState),
+                    .mouse_flags = flags,
+                    .mouse_scroll_direction = if (flags.mouse_wheeled) (
+                        if (ir.Event.MouseEvent.dwButtonState & 0xFF800000 == 0) MouseScrollDirection.up else MouseScrollDirection.down
+                    ) else if (flags.mouse_hwheeled) (
+                        if (ir.Event.MouseEvent.dwButtonState & 0xFF800000 == 0) MouseScrollDirection.right else MouseScrollDirection.left
+                    ) else null,
                     .control_keys = utils.fromUnsigned(ControlKeys, ir.Event.MouseEvent.dwControlKeyState)
                 }};
             },
