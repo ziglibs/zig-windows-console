@@ -9,6 +9,13 @@ pub const FOCUS_EVENT = 0x0010;
 
 pub extern fn SetConsoleMode(hConsoleHandle: HANDLE, dwMode: DWORD) BOOL;
 pub extern fn GetConsoleMode(hConsoleHandle: HANDLE, lpMode: LPDWORD) BOOL;
+pub extern fn WriteConsoleW(
+    hConsoleOutput: HANDLE,
+    lpBuffer: [*]const u16,
+    nNumberOfCharsToWrite: DWORD,
+    lpNumberOfCharsWritten: ?*DWORD,
+    lpReserved: ?*c_void
+) BOOL;
 
 // Events
 const union_unnamed_248 = extern union {

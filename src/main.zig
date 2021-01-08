@@ -93,4 +93,12 @@ pub const ConsoleApp = struct {
 
         return bf;
     }
+
+    pub fn writeW(self: Self, buf: []u16) !void {
+        if (c.WriteConsoleW(self.stdout_handle, buf.ptr, @intCast(u32, buf.len), null, null) == 0) {
+            switch (c.kernel32.GetLastError()) {
+                else => |err| return c.unexpectedError(err),
+            }
+        }
+    }
 };
