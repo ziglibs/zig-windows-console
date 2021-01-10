@@ -38,7 +38,7 @@ pub fn main() !void {
                 });
             },
             .mouse => |mouse| {
-                std.debug.print("Mouse Event | abs: {} | in viewport: {}", .{mouse.abs_coords, try con.viewportCoords(mouse.abs_coords)});
+                std.debug.print("Mouse Event | abs: {} | in viewport: {}", .{mouse.abs_coords, try con.viewportCoords(mouse.abs_coords, null)});
                 if (mouse.mouse_flags.double_click) std.debug.print(" | double click", .{});
                 if (mouse.mouse_flags.mouse_moved) std.debug.print(" | mouse moved", .{});
                 if (mouse.mouse_flags.mouse_wheeled or mouse.mouse_flags.mouse_hwheeled) std.debug.print(" | mouse wheel: {}", .{mouse.mouse_scroll_direction.?});

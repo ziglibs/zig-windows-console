@@ -3,6 +3,7 @@ const testing = std.testing;
 
 const c = @import("c/c.zig");
 
+pub usingnamespace @import("types.zig");
 pub usingnamespace @import("modes.zig");
 pub usingnamespace @import("events.zig");
 
@@ -58,8 +59,7 @@ pub const ConsoleApp = struct {
         }
     }
 
-    /// NOTE: Please don't directly use this - instead, use `getEvent`!
-    pub fn getInputRecord(self: Self) !c.INPUT_RECORD {
+    pub fn getEvent(self: Self) !Event {
         var events: u32 = 0;
         var input_record = std.mem.zeroes(c.INPUT_RECORD);
 
@@ -69,20 +69,14 @@ pub const ConsoleApp = struct {
             }
         }
 
-        return input_record;
+        return Event.fromInputRecord(input_record);
     }
 
-    pub fn getEvent(self: Self) !Event {
-        return Event.fromInputRecord(try self.getInputRecord());
+    pub fn viewportCoords(self: Self, coords: Coords, viewport_rect: ?Rect) !Coords {
+        return Coords{.x = coords.x, .y = coords.y - (viewport_rect orelse (try self.getScreenBufferInfo()).viewport_rect).top};
     }
 
-    pub fn viewportCoords(self: Self, coords: Coords) !Coords {
-        var buf = try self.getScreenBufferInfo();
-
-        return Coords{.x = coords.x, .y = coords.y - buf.srWindow.Top};
-    }
-
-    pub fn getScreenBufferInfo(self: Self) !c.CONSOLE_SCREEN_BUFFER_INFO {
+    pub fn getScreenBufferInfo(self: Self) !ScreenBufferInfo {
         var bf = std.mem.zeroes(c.CONSOLE_SCREEN_BUFFER_INFO);
     
         if (c.kernel32.GetConsoleScreenBufferInfo(self.stdout_handle, &bf) == 0) {
@@ -91,7 +85,7 @@ pub const ConsoleApp = struct {
             }
         }
 
-        return bf;
+        return @bitCast(ScreenBufferInfo, bf);
     }
 
     pub fn writeW(self: Self, buf: []u16) !void {
