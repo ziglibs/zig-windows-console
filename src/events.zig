@@ -38,9 +38,9 @@ pub const Event = union(enum) {
                     .mouse_buttons = utils.fromUnsigned(MouseButtons, ir.Event.MouseEvent.dwButtonState),
                     .mouse_flags = flags,
                     .mouse_scroll_direction = if (flags.mouse_wheeled) (
-                        if (ir.Event.MouseEvent.dwButtonState & 0xFF800000 == 0) MouseScrollDirection.up else MouseScrollDirection.down
+                        if (ir.Event.MouseEvent.dwButtonState & 0xFF000000 == 0) MouseScrollDirection.up else MouseScrollDirection.down
                     ) else if (flags.mouse_hwheeled) (
-                        if (ir.Event.MouseEvent.dwButtonState & 0xFF800000 == 0) MouseScrollDirection.right else MouseScrollDirection.left
+                        if (ir.Event.MouseEvent.dwButtonState & 0xFF000000 == 0) MouseScrollDirection.right else MouseScrollDirection.left
                     ) else null,
                     .control_keys = utils.fromUnsigned(ControlKeys, ir.Event.MouseEvent.dwControlKeyState)
                 }};
