@@ -1,10 +1,7 @@
 const std = @import("std");
 
 const c = @import("c/c.zig");
-
 const utils = @import("utils.zig");
-const VirtualKey = @import("virtual_key.zig");
-
 usingnamespace @import("types.zig");
 
 pub const Event = union(enum) {

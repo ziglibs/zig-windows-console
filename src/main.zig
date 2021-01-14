@@ -2,13 +2,9 @@ const std = @import("std");
 const testing = std.testing;
 
 const c = @import("c/c.zig");
-
-pub usingnamespace @import("types.zig");
-pub usingnamespace @import("modes.zig");
-pub usingnamespace @import("events.zig");
-
 const utils = @import("utils.zig");
-pub const VirtualKey = @import("virtual_key.zig");
+pub usingnamespace @import("types.zig");
+pub usingnamespace @import("events.zig");
 
 pub const ConsoleApp = struct {
     const Self = @This();
