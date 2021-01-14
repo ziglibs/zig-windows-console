@@ -1,28 +1,41 @@
 const std = @import("std");
 const ansi = @import("ansi");
-const zwincon = @import("zwincon");
-const c = zwincon.c;
+const zwc = @import("zwc");
 
 pub fn main() !void {
-    var con = try zwincon.ConsoleApp.init();
+    var con = try zwc.ConsoleApp.init();
+    var stdout = std.io.getStdOut().writer();
+
+    var before_cp = con.getCodepage();
     var before_input_mode = try con.getInputMode();
     var before_output_mode = try con.getOutputMode();
 
-    try con.setInputMode(zwincon.InputMode{
+    try con.setInputMode(zwc.InputMode{
         .enable_extended_flags = true, // Does things... docs aren't very clear but do say they should be used with quickedit = false
         .enable_processed_input = false, // False disables Windows handling Control + C, we do that ourselves
         .enable_mouse_input = true, // Allows mouse events to be processed
         .enable_quick_edit_mode = false // False disables auto drag selection
     });
 
-    try con.setOutputMode(zwincon.OutputMode{
+    try con.setOutputMode(zwc.OutputMode{
         .enable_virtual_terminal_processing = true, // Enables ANSI sequences - this demo was originally a paint app but I didn't want unnecessary external deps to plague this simple example
     });
 
     defer {
+        con.setCodepage(before_cp) catch {};
         con.setInputMode(before_input_mode) catch {};
         con.setOutputMode(before_output_mode) catch {};
     }
+
+    try con.setCodepage(65001);
+    try stdout.writeAll("Cool thing: I have UTF-8 support thanks to the 65001 codepage!\n");
+    
+    var sbi = try con.getScreenBufferInfo();
+    var w: usize = 0;
+    while (w < sbi.viewport_rect.right + 1) : (w += 1) {
+        try stdout.writeAll("─");
+    }
+    try stdout.writeAll("\n");
 
     std.debug.print("Move your mouse around and type on your keyboard to see what I do!\n", .{});
     main: while (true) {

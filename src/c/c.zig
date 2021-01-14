@@ -7,6 +7,9 @@ pub const WINDOW_BUFFER_SIZE_EVENT = 0x0004;
 pub const MENU_EVENT = 0x0008;
 pub const FOCUS_EVENT = 0x0010;
 
+pub extern fn GetConsoleOutputCP() c_uint;
+pub extern fn SetConsoleOutputCP(wCodePageID: c_uint) BOOL;
+
 pub extern fn SetConsoleMode(hConsoleHandle: HANDLE, dwMode: DWORD) BOOL;
 pub extern fn GetConsoleMode(hConsoleHandle: HANDLE, lpMode: LPDWORD) BOOL;
 pub extern fn WriteConsoleW(

@@ -10,7 +10,7 @@ pub fn build(b: *Builder) void {
     main_demo.setBuildMode(mode);
 
     main_demo.linkSystemLibrary("kernel32");
-    main_demo.addPackagePath("zwincon", "src/main.zig");
+    main_demo.addPackagePath("zwc", "src/main.zig");
     main_demo.install();
 
     const run_cmd = main_demo.run();
