@@ -1,20 +1,20 @@
 const std = @import("std");
 
-const virtual_keys = comptime v: {
+const virtual_keys = v: {
     @setEvalBranchQuota(100000);
 
     const list = @embedFile("c/vk_list");
-        
+
     var i: usize = 0;
-    var vks = [_]VirtualKey{std.mem.zeroes(VirtualKey)}**(std.mem.count(u8, list, "\n")+1);
-    var lines = std.mem.split(list, "\n");
+    var vks = [_]VirtualKey{std.mem.zeroes(VirtualKey)} ** (std.mem.count(u8, list, "\n") + 1);
+    var lines = std.mem.split(u8, list, "\n");
 
     while (lines.next()) |line| {
-        var line_vals = std.mem.split(line, " ");
+        var line_vals = std.mem.split(u8, line, " ");
 
         var symbol = line_vals.next().?;
         var value = std.mem.trim(u8, line_vals.next().?, &std.ascii.spaces);
-        vks[i] = .{.symbol = symbol, .value = try std.fmt.parseInt(u16, value, 10)};
+        vks[i] = .{ .symbol = symbol, .value = std.fmt.parseInt(u16, value, 10) catch @compileError("bruh") };
 
         i += 1;
     }
@@ -47,17 +47,9 @@ pub const VirtualKey = struct {
     }
 };
 
-pub const Coords = struct {
-    x: i16,
-    y: i16
-};
+pub const Coords = struct { x: i16, y: i16 };
 
-pub const Rect = struct {
-    left: i16,
-    top: i16,
-    right: i16,
-    bottom: i16
-};
+pub const Rect = struct { left: i16, top: i16, right: i16, bottom: i16 };
 
 pub const ScreenBufferInfo = struct {
     size: Coords,
@@ -91,7 +83,7 @@ pub const Key = union(enum) {
     ascii: u8,
     unicode: u16,
     virtual_key: VirtualKey,
-    unknown: void
+    unknown: void,
 };
 
 pub const ControlKeys = struct {
@@ -103,33 +95,33 @@ pub const ControlKeys = struct {
     right_alt_pressed: bool = false,
     right_ctrl_pressed: bool = false,
     scrolllock_on: bool = false,
-    shift_pressed: bool = false
+    shift_pressed: bool = false,
 };
 
 pub const KeyEvent = struct {
     key: Key,
     is_down: bool,
-    control_keys: ControlKeys
+    control_keys: ControlKeys,
 };
 
 pub const MouseButtons = struct {
     left_mouse_button: bool = false,
     middle_mouse_button: bool = false,
-    right_mouse_button: bool = false
+    right_mouse_button: bool = false,
 };
 
 pub const MouseFlags = struct {
     double_click: bool = false,
     mouse_hwheeled: bool = false,
     mouse_moved: bool = false,
-    mouse_wheeled: bool = false
+    mouse_wheeled: bool = false,
 };
 
 pub const MouseScrollDirection = enum {
     up,
     down,
     left,
-    right
+    right,
 };
 
 pub const MouseEvent = struct {
@@ -137,5 +129,5 @@ pub const MouseEvent = struct {
     mouse_buttons: MouseButtons,
     mouse_flags: MouseFlags,
     mouse_scroll_direction: ?MouseScrollDirection,
-    control_keys: ControlKeys
+    control_keys: ControlKeys,
 };
