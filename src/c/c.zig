@@ -17,7 +17,7 @@ pub extern fn WriteConsoleW(
     lpBuffer: [*]const u16,
     nNumberOfCharsToWrite: windows.DWORD,
     lpNumberOfCharsWritten: ?*windows.DWORD,
-    lpReserved: ?*c_void,
+    lpReserved: ?*anyopaque,
 ) windows.BOOL;
 
 // Events
